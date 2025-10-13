@@ -7,7 +7,7 @@
     <a href="https://chenyuwang-monica.github.io/" target="_blank">Chenyu Wang</a><sup>1,*</sup> | 
     <a href="https://zdhnarsil.github.io/" target="_blank">Dinghuai Zhang</a><sup>2,*</sup> | 
     <a href="https://shangyuantong.github.io/" target="_blank">Shangyuan Tong</a><sup>1</sup> | 
-    <a href="https://yifeiwang77.com/" target="_blank">Yifei Wang</a><sup>1</sup> |
+    <a href="https://yifeiwang77.com/" target="_blank">Yifei Wang</a><sup>1</sup> |<br>
     <a href="https://stephenbates19.github.io/index.html" target="_blank">Stephen Bates</a><sup>1,†</sup> |
     <a href="https://people.csail.mit.edu/tommi/tommi.html" target="_blank">Tommi Jaakkola</a><sup>1,†</sup>
 </div>
