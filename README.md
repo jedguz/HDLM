@@ -40,7 +40,7 @@
 </div>
 <br>
 
-We present Hierarchical Diffusion Language Model (GIDD), a novel framework for training discrete diffusion models via time-varying next-semantic scale prediction.
+We present Hierarchical Diffusion Language Model (HDLM), a novel framework for training discrete diffusion models via time-varying next-semantic scale prediction.
 HDLM extends standard Masked Diffusion Model (MDM) by introducing intermediate hierarchies (termed cluster tokens) in between clean tokens and masked tokens.
 In the forward process, each token is independently perturbed to its higher-level ancestor with more abstract semantics according to the scheduler, while in the reverse process the model progressively predicts the next, more detailed semantics. 
 Taken together, HDLM provides a general time-varying next semantic scale prediction process for language modeling. We derive closed-form expressions for the diffusion Evidence Lower Bound (ELBO), and show that HDLM can be implemented in a flexible manner while including the existing MDM as a special case.
@@ -83,13 +83,13 @@ Key hyperparameters include:
 torchrun --nnodes 1 --nproc_per_node 8 hdlm/train.py --config-name hdlm-small-cluster_64-gamma_1.0-xi_1.0 logging.run_name="'small-hdlm-cluster_64-gamma_1.0-xi_1.0-owt'"
 
 # GIDD+ baseline
-torchrun --nnodes 1 --nproc_per_node 8 gidd/train.py --config-name gidd logging.run_name="'small-gidd+-owt-pu=0.0'"
+torchrun --nnodes 1 --nproc_per_node 8 hdlm/train.py --config-name gidd logging.run_name="'small-gidd+-owt-pu=0.0'"
 
 # MDLM baseline
-torchrun --nnodes 1 --nproc_per_node 8 gidd/train.py --config-name mdlm logging.run_name="'small-mdlm-owt'"
+torchrun --nnodes 1 --nproc_per_node 8 hdlm/train.py --config-name mdlm logging.run_name="'small-mdlm-owt'"
 
 # AR baseline
-torchrun --nnodes 1 --nproc_per_node 8 gidd/train.py --config-name ar logging.run_name="'small-ar-owt'"
+torchrun --nnodes 1 --nproc_per_node 8 hdlm/train.py --config-name ar logging.run_name="'small-ar-owt'"
 ```
 
 
