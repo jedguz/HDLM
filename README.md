@@ -28,8 +28,8 @@
 <div align="left"> 
 
 ## 📢 News
-- [2025/09/18] HDLM is accepted to NeurIPS 2025!
-- [2025/10/12] Paper is available on arXiv!
+- [2025/09/18] HDLM is accepted to [NeurIPS 2025](https://neurips.cc/virtual/2025/poster/116380)!
+- [2025/10/12] Paper is available on [arXiv](https://arxiv.org/abs/2510.08632)!
 - [2025/10/12] Code is released!
 
 ## 💻 Overview
