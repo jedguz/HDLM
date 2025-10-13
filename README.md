@@ -17,6 +17,7 @@
 </div>
 <div>
     <sup>*</sup> Equal Contribution  <sup>†</sup> Equal Senior Supervision
+</div>
 <br>
 
 
