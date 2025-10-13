@@ -1,0 +1,23 @@
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mdlm"
+description = "Hierarchical Diffusion Language Model"
+version = "0.0.1"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Cai Zhou"},
+    {name = "Chenyu Wang"},
+    {name = "Dinghuai Zhang"},
+    {name = "Shangyuan Tong"},
+    {name = "Yifei Wang"},
+    {name = "Stephen Bates"},
+    {name = "Tommi Jaakkola"}    
+]
+
+[tool.setuptools]
+packages = ["hdlm"]

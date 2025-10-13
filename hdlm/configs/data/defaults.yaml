@@ -1,0 +1,10 @@
+test_size: 100000
+num_workers: 4
+tokenizer_name: gpt2
+pre_tokenize: false
+sequence_packing: false  # change to true if you want to use sequence packing
+max_add_padding: 0
+trust_remote_code: True
+dataset_subset: null
+cache_dir: ./data  # change to your own data path
+split_sequences: False

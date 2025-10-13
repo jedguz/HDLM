@@ -1,0 +1,9 @@
+dataset_name: dvruette/lm1b
+num_workers: 4
+tokenizer_name: bert-base-uncased
+pre_tokenize: true
+sequence_packing: false
+max_add_padding: 0
+trust_remote_code: True
+dataset_subset: null
+cache_dir: ./data  # change to your own data path

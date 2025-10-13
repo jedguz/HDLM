@@ -1,0 +1,58 @@
+defaults:
+  - logging: default
+  - data: owt
+  - model: small
+  - optimizer: adam
+  - hydra: default
+  - _self_
+
+model:
+  type: diffusion
+  diffusion_process: hdlm
+  p_uniform: 0.0
+  t_eps: 1e-4
+  cluster_dict_path: hdlm/clusters/semantic_cluster_dict_gidd-small-p_unif-0.0_1.pt
+  cluster_embed_path: hdlm/clusters/semantic_centroids_gidd-small-p_unif-0.0_1.pt
+  pretrained_model_name: gidd-small-p_unif-0.0
+  freeze_embeddings: False
+  use_pretrained_embeddings: True
+  cluster_size: 1
+  gamma: 1.0
+  p_perturb: 0.0
+
+training:
+  resume: null
+  seed: 0
+  train_batch_size: 64
+  eval_batch_size: 64
+  num_train_steps: 1000_000
+  lr_schedule: cosine
+  warmup_steps: 10000
+  low_discrepancy_sampling: True
+  dtype: bf16
+  compile_model: True
+
+loss:
+  loss_type: hdlm
+  loss_weighting: dynamic  # [dynamic, clip, none]
+  min_loss_weight: 0.0
+  max_loss_weight: 2.0  # 10.0
+  loss_scale: 1.0
+  reduction: tokenmean
+  simplified: False  # GIDD type of loss
+  mask_only: True
+  cluster_loss_weight: 1.0
+  token_loss_weight: 1.0
+  force_transitting_within: True
+  force_transitting_between: False
+  hard_training: False
+
+# generate samples
+path: hdlm/checkpoints/hdlm-small-cluster_1-gamma_1.0-xi_1.0-owt/-1M  # change to your own checkpoint path
+batch_size: 32
+num_samples: 256
+num_denoising_steps: 512
+min_p: 0.0
+sampling_parameterization: mdlm
+temperature: 1.0
+samples_path: samples-small-1-steps_512-mdlm-temp_1.0.pt

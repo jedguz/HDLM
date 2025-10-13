@@ -1,0 +1,2 @@
+run:
+  dir: "hdlm/outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}"  # change to your own output path
