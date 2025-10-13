@@ -13,11 +13,10 @@
 </div>
 <br>
 <div>
-    <sup></sup><sup>1</sup> Massachusetts Institute of Technology<br><sup>2</sup> Microsoft Research
+    <sup></sup><sup>1</sup> Massachusetts Institute of Technology   <sup>2</sup> Microsoft Research
 </div>
-<br>
 <div>
-    <sup>*</sup> Equal Contribution<br><sup>†</sup> Equal Senior Supervision
+    <sup>*</sup> Equal Contribution  <sup>†</sup> Equal Senior Supervision
 <br>
 
 
