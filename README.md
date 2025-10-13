@@ -1,5 +1,3 @@
-# Official Repository for NeurIPS 2025 Paper: Next Semantic Scale Prediction via Hierarchical Diffusion Language Models
-
 <div align="center">
 
 <h1>Next Semantic Scale Prediction via Hierarchical Diffusion Language Models | NeurIPS 2025</h1>
