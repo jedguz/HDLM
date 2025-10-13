@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1>Next Semantic Scale Prediction via<br>Hierarchical Diffusion Language Models | NeurIPS 2025</h1>
+<h1>NeurIPS 2025 | Next Semantic Scale Prediction via<br>Hierarchical Diffusion Language Models</h1>
 
 <div>
     <a href="https://homepage.zhouc.ai/" target="_blank">Cai Zhou</a><sup>1,*</sup> | 
