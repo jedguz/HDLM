@@ -1,7 +1,6 @@
 <div align="center">
 
-<h1>Next Semantic Scale Prediction via 
-    Hierarchical Diffusion Language Models | NeurIPS 2025</h1>
+<h1>Next Semantic Scale Prediction via<br>Hierarchical Diffusion Language Models | NeurIPS 2025</h1>
 
 <div>
     <a href="https://homepage.zhouc.ai/" target="_blank">Cai Zhou</a><sup>1,*</sup> | 
@@ -18,7 +17,7 @@
 </div>
 <br>
 <div>
-    <sup>*</sup> Equal Contribution<br><sup>$\dagger$</sup> Equal Senior Supervision
+    <sup>*</sup> Equal Contribution<br><sup>†</sup> Equal Senior Supervision
 <br>
 
 
