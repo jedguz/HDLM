@@ -1,6 +1,7 @@
 <div align="center">
 
-<h1>Next Semantic Scale Prediction via Hierarchical Diffusion Language Models | NeurIPS 2025</h1>
+<h1>Next Semantic Scale Prediction via 
+    Hierarchical Diffusion Language Models | NeurIPS 2025</h1>
 
 <div>
     <a href="https://homepage.zhouc.ai/" target="_blank">Cai Zhou</a><sup>1,*</sup> | 
@@ -8,8 +9,8 @@
     <a href="https://zdhnarsil.github.io/" target="_blank">Dinghuai Zhang</a><sup>2,*</sup> | 
     <a href="https://shangyuantong.github.io/" target="_blank">Shangyuan Tong</a><sup>1</sup> | 
     <a href="https://yifeiwang77.com/" target="_blank">Yifei Wang</a><sup>1</sup> |
-    <a href="https://stephenbates19.github.io/index.html" target="_blank">Stephen Bates</a><sup>1,$\dagger$</sup> |
-    <a href="https://people.csail.mit.edu/tommi/tommi.html" target="_blank">Tommi Jaakkola</a><sup>1,$\dagger$</sup>
+    <a href="https://stephenbates19.github.io/index.html" target="_blank">Stephen Bates</a><sup>1,†</sup> |
+    <a href="https://people.csail.mit.edu/tommi/tommi.html" target="_blank">Tommi Jaakkola</a><sup>1,†</sup>
 </div>
 <br>
 <div>
