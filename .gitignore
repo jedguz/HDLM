@@ -1,0 +1,17 @@
+# --- Python / venv ---
+.venv/
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# --- IDE / editor ---
+.vscode/
+.idea/
+
+# --- Misc ---
+.DS_Store
+EOF
