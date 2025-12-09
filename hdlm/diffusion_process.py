@@ -258,7 +258,7 @@ def get_noise_schedule(config, tokenizer):
     elif config.model.diffusion_process == "gidd":
         noise_schedule = HybridDiffusion(tokenizer, p_uniform=config.model.p_uniform)
     elif config.model.diffusion_process == "hdlm":
-        noise_schedule = HierarchicalDiffusion(tokenizer, config=config, p_uniform=config.model.p_uniform, gamma=config.model.get('gamma', 1.0), p_perturb=config.model.get('p_perturb', 0.0), num_levels=config.model.get("num_levels", 2), cluster_size=config.model.cluster_size, cluster_dict=config.model.cluster_dict_path)
+        noise_schedule = HierarchicalDiffusion(tokenizer, config=config)
     elif config.model.diffusion_process == "mdlm":
         noise_schedule = MaskedDiffusion(tokenizer)
     else:

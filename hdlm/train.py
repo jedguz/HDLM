@@ -194,7 +194,8 @@ def main(config):
         opt_trainer = trainer
 
     if is_distributed:
-        ddp_trainer = DDP(opt_trainer, device_ids=[device.index])
+        ddp_trainer = DDP(opt_trainer, device_ids=[device.index], 
+        find_unused_parameters=True) # added
     else:
         ddp_trainer = opt_trainer
 
