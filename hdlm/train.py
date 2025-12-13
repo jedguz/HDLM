@@ -89,7 +89,7 @@ def main(config):
         config.training.world_size = world_size
         if config.model.get("cluster_dict_path", None) is not None:
             cluster_dict = torch.load(config.model.cluster_dict_path)
-    is_distributed = torch.distributed.is_available() and torch.distributed.is_initialized()
+    is_distributed = dist.is_initialized() and dist.get_world_size() > 1
 
     seed = config.training.seed + global_rank
     torch.manual_seed(seed)
@@ -194,8 +194,7 @@ def main(config):
         opt_trainer = trainer
 
     if is_distributed:
-        ddp_trainer = DDP(opt_trainer, device_ids=[device.index], 
-        find_unused_parameters=True) # added
+        ddp_trainer = DDP(opt_trainer, device_ids=[local_rank], output_device=local_rank)
     else:
         ddp_trainer = opt_trainer
 
@@ -216,11 +215,14 @@ def main(config):
         train_dl.sampler.set_epoch(state.epoch)
     batch_iterator = iter(train_dl)
 
-
+    if is_main_process:
+        _ = next(iter(test_dl))  # only rank0 spawns eval workers / warms cache
+    if is_distributed:
+        dist.barrier()
 
     # initialize eval dataloader to prevent new processes getting started during training
     # (without this crashes can occur if the code changes before the first eval step)
-    _ = next(iter(test_dl))
+    # _ = next(iter(test_dl))
 
     # for resuming training, skip the batches that were already trained on
     if state.step - state.epoch_start_step > 0:
@@ -311,45 +313,6 @@ def main(config):
                 logger.log({"trainer/global_step": step}, step=step)
                 log_buffer = []
 
-            ### EVAL ###
-
-            if ((step + 1) % config.logging.eval_freq) == 0:
-                with torch.no_grad():
-                    eval_start_time = time.time()
-                    model.eval()
-
-                    eval_metrics = {}
-                    eval_loss = 0
-                    num_eval_samples = 0
-                    for i, test_batch in enumerate(tqdm.tqdm(test_dl, desc="Eval", dynamic_ncols=True, total=config.logging.num_eval_batches, disable=not is_main_process)):
-                        bs = test_batch["input_ids"].size(0)
-
-                        test_batch = {k: v.to(device, non_blocking=True) for k, v in test_batch.items()}
-                        loss, metrics = ddp_trainer(test_batch, force_transitting=True)
-
-                        for k, v in metrics.items():
-                            eval_metrics[k] = eval_metrics.get(k, 0) + (v.item() if isinstance(v, torch.Tensor) else v) * bs
-
-                        eval_loss += loss.item() * bs
-                        num_eval_samples += bs
-
-                        if i >= config.logging.num_eval_batches - 1:
-                            break
-
-                    for key in ["nll", "ppl"]:
-                        if key in eval_metrics:
-                            del eval_metrics[key]
-
-                    dist.barrier()
-
-                    eval_elapsed_time = time.time() - eval_start_time
-                    logger.log({
-                        "eval/loss": eval_loss / num_eval_samples,
-                        "eval/time_taken": eval_elapsed_time,
-                        **{f"eval/{k}": v / num_eval_samples for k, v in eval_metrics.items()},
-                    }, step=step)
-                    model.train()
-
             ### SAVE ###
 
             # increment step before saving so that resuming from the checkpoint will start at the next step
@@ -376,6 +339,65 @@ def main(config):
                 output_path.mkdir(exist_ok=True, parents=True)
                 save_rng_state(output_path, global_rank)
                 dist.barrier()
+
+
+            ### EVAL ### fixed eval to use ddp_trainer
+
+            if ((step + 1) % config.logging.eval_freq) == 0:
+                if is_main_process:
+                    with torch.no_grad():
+                        eval_start_time = time.time()
+                        model.eval()
+
+                        eval_metrics = {}
+                        eval_loss = 0.0
+                        num_eval_samples = 0
+
+                        # IMPORTANT: do NOT call the DDP wrapper here if only rank0 is evaluating.
+                        # Use the underlying module so there are no collectives.
+                        eval_fn = ddp_trainer.module if (is_distributed and hasattr(ddp_trainer, "module")) else ddp_trainer
+
+                        for i, test_batch in enumerate(
+                            tqdm.tqdm(
+                                test_dl,
+                                desc="Eval",
+                                dynamic_ncols=True,
+                                total=config.logging.num_eval_batches,
+                                disable=not is_main_process,
+                            )
+                        ):
+                            bs = test_batch["input_ids"].size(0)
+                            test_batch = {k: v.to(device, non_blocking=True) for k, v in test_batch.items()}
+
+                            loss, metrics = eval_fn(test_batch, force_transitting=True)
+
+                            for k, v in metrics.items():
+                                eval_metrics[k] = eval_metrics.get(k, 0.0) + (v.item() if isinstance(v, torch.Tensor) else v) * bs
+
+                            eval_loss += loss.item() * bs
+                            num_eval_samples += bs
+
+                            if i >= config.logging.num_eval_batches - 1:
+                                break
+
+                        for key in ["nll", "ppl"]:
+                            eval_metrics.pop(key, None)
+
+                        eval_elapsed_time = time.time() - eval_start_time
+                        logger.log(
+                            {
+                                "eval/loss": eval_loss / max(1, num_eval_samples),
+                                "eval/time_taken": eval_elapsed_time,
+                                **{f"eval/{k}": v / max(1, num_eval_samples) for k, v in eval_metrics.items()},
+                            },
+                            step=step,
+                        )
+
+                        model.train()
+
+                # everybody syncs here so you don't desync steps
+                if is_distributed:
+                    dist.barrier()
 
             pbar.update(1)
 

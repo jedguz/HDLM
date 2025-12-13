@@ -20,6 +20,7 @@ def sample_t(config, batch_size, eps=None, device=None):
     t = (1 - 2 * eps) * t + eps
     return t
 
+# Abstract base class for forward process families (GIDD/MDM/HDLM). Each family must implement the methods defined here.
 
 class NoiseSchedule(nn.Module, ABC):
     def __init__(self, tokenizer):
@@ -50,7 +51,7 @@ class NoiseSchedule(nn.Module, ABC):
     def sample_zt(self, input_ids, t):
         raise NotImplementedError
 
-
+# GIDD class
 class HybridDiffusion(NoiseSchedule):
     def __init__(self, tokenizer, clip_noise=20, gamma=1.0, p_uniform=0.0):
         super().__init__(tokenizer)
@@ -64,6 +65,7 @@ class HybridDiffusion(NoiseSchedule):
         self.register_buffer("log_B", torch.tensor(float(log_B)).clip(-clip_noise))
         self.register_buffer("log_gamma", torch.tensor(float(gamma)).log())
     
+    # GIDD hybrid marginal schedule: closed-form q_t = alpha_t * one_hot(x) + noise(mask + uniform), with gamma shaping time curvature. highest uniform noise at t=0.5, shape dep on gamma
     def get_alpha_betapi(self, t, eps=1e-4):
         t = t[:, None]
         t1m = 1 - t
@@ -125,6 +127,7 @@ class HybridDiffusion(NoiseSchedule):
         z_t = sample_categorical(probs)
         return z_t
     
+# HDLM class
 
 class HierarchicalDiffusion(NoiseSchedule):
     def __init__(self, tokenizer, config, clip_noise=20):
@@ -216,6 +219,7 @@ class HierarchicalDiffusion(NoiseSchedule):
         z_t = sample_categorical(probs)
         return z_t
     
+# MDLM class
 
 class MaskedDiffusion(NoiseSchedule):
     def __init__(self, tokenizer):

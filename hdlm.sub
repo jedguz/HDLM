@@ -1,0 +1,19 @@
+universe        = vanilla
+executable      = run_hdlm.sh
+getenv          = True
+
+request_gpus    = 8
+request_cpus    = 32
+request_memory  = 128GB
+
+# Force H100 + 80GB-ish
+requirements    = regexp("H100", TARGET.GPUs_DeviceName) && (TARGET.GPUs_GlobalMemoryMb >= 80000)
+
+# 6 hours
++MaxRuntime     = 21600
+
+output          = logs/hdlm.$(Cluster).out
+error           = logs/hdlm.$(Cluster).err
+log             = logs/hdlm.$(Cluster).log
+
+queue

@@ -1,0 +1,9 @@
+run_name: null
+num_eval_batches: 196
+log_freq: 10
+eval_freq: 20000
+save_freq: 5000
+save_dir: /lustre/home/jguzelkabaagac/exp/hdlm/checkpoints # checkpoint saving
+wandb_entity: thesisws25
+wandb_project: hdlm
+wandb_dir: /lustre/home/jguzelkabaagac/exp/hdlm/wandb # local cache for wandb

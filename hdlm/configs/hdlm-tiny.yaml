@@ -1,5 +1,5 @@
 defaults:
-  - logging: default
+  - logging: jed
   - data: owt
   - model: small
   - optimizer: adam
@@ -18,46 +18,40 @@ model:
   use_pretrained_embeddings: True
   cluster_size: 64
   gamma: 1.0
-  p_perturb: 0.1
+  p_perturb: 0.0
 
 training:
-  resume: null
+  resume: null #/lustre/home/jguzelkabaagac/exp/hdlm/checkpoints/checkpt_test/latest
   seed: 0
   train_batch_size: 64        # ↓ from 64
   eval_batch_size: 64
-  num_train_steps: 5000       # ↓ from 1_000_000
+  num_train_steps: 500000       # ↓ from 1_000_000
   lr_schedule: cosine
-  warmup_steps: 500           # scale down warmup
+  warmup_steps: 10000           # scale down warmup
   low_discrepancy_sampling: True
   dtype: bf16              # safer for debug than bf16
   compile_model: True        # turn off compilation until it’s stable
 
 loss:
   loss_type: hdlm
-  loss_weighting: dynamic
+  loss_weighting: dynamic  # [dynamic, clip, none]
   min_loss_weight: 0.0
-  max_loss_weight: 2.0
+  max_loss_weight: 2.0  # 10.0
   loss_scale: 1.0
   reduction: tokenmean
-  simplified: True
+  simplified: False  # GIDD type of loss
   mask_only: True
   cluster_loss_weight: 1.0
   token_loss_weight: 1.0
-  force_transitting_within: False
+  force_transitting_within: True
   force_transitting_between: False
   hard_training: False
-
-logging:
-  wandb_entity: thesisws25
-  wandb_project: hdlm
-  wandb_dir: /lustre/home/jguzelkabaagac/wandb
-  run_name: null    # <-- add this line
   
-path: hdlm/checkpoints/hdlm-small-cluster_64-gamma_1.0-xi_0.9-owt/-1M  # change to your own checkpoint path
+path: hdlm/checkpoints/hdlm-small-cluster_64-gamma_1.0-xi_1.0-owt/-1M  # change to your own checkpoint path
 batch_size: 32
 num_samples: 256
 num_denoising_steps: 512
 min_p: 0.0
 sampling_parameterization: mdlm
 temperature: 1.0
-samples_path: samples-small-64-xi_0.9-steps_512-mdlm-force_int-temp_1.0.pt
+samples_path: samples-small-64-steps_512-mdlm-temp_1.0.pt

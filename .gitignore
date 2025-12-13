@@ -20,3 +20,4 @@ hdlm/outputs
 data
 mdlm.egg-info
 run_hdlm.sh
+logs/

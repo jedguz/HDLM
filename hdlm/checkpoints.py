@@ -79,28 +79,52 @@ def load_checkpoint(path, device=None):
     
     return model, noise_schedule, tokenizer, config
 
-
 def load_checkpoint_for_training(path, config=None, device=None, dtype=None):
-    # load model, noise_schedule, tokenizer and config
+    path = Path(path)
+
+    # load model, noise_schedule, tokenizer, and checkpoint config
     model, noise_schedule, tokenizer, old_config = load_checkpoint(path, device=None)
+
+    # use checkpoint config unless caller provided one
     if config is None:
-        # use the config from the checkpoint if none is provided
         config = old_config
-    if device:
-        noise_schedule.to(device)
-    # initialize trainer
-    loss_fn = get_loss(config, tokenizer, noise_schedule, model=model)
+
+    # move schedule/model to device (trainer.to(...) should move too, but be explicit)
+    if device is not None:
+        model.to(device)
+        if noise_schedule is not None:
+            noise_schedule.to(device)
+
+    # initialize trainer exactly like fresh training does (no extra kwargs)
+    loss_fn = get_loss(config, tokenizer, noise_schedule)
     trainer = get_trainer(config, model, tokenizer, noise_schedule, loss_fn, dtype=dtype)
-    if device:
+    if device is not None:
         trainer.to(device)
-    # initialize and load optimizer state
+
+    # optimizer + load state
     optimizer = get_optimizer(config, trainer)
-    # opt_state_dict = torch.load(Path(path, "optimizer.pt"), map_location="cpu", weights_only=True)
-    # optimizer.load_state_dict(opt_state_dict)
-    # load training state
-    with open(Path(path, "state.json")) as f:
+    opt_path = path / "optimizer.pt"
+    if opt_path.exists():
+        opt_state_dict = torch.load(opt_path, map_location="cpu")
+        optimizer.load_state_dict(opt_state_dict)
+
+        # move optimizer state tensors to GPU
+        if device is not None:
+            for st in optimizer.state.values():
+                for k, v in st.items():
+                    if torch.is_tensor(v):
+                        st[k] = v.to(device)
+    else:
+        print(f"[WARN] Missing optimizer checkpoint: {opt_path}")
+
+    # heavyball-specific safety
+    if hasattr(optimizer, "promote"):
+        optimizer.promote = True
+
+    # training state
+    with open(path / "state.json", "r") as f:
         state = TrainingState(**json.load(f))
-    # return everything
+
     return model, noise_schedule, tokenizer, old_config, trainer, optimizer, state
 
 
