@@ -35,8 +35,19 @@ def get_lr(config, lr, step):
 
 @torch.no_grad()
 def sample_categorical(probs, generator=None):
+
     # return torch.distributions.Categorical(probs=probs).sample()
-    uniform = torch.rand(probs.shape[:-1], dtype=probs.dtype, device=probs.device, generator=generator).unsqueeze(-1)
+    # torch.compile/Dynamo: torch.rand(size=...) can fail with symbolic shapes.
+    # rand_like takes shape from an existing tensor, so it works with SymInt.
+# compile-safe: avoid torch.rand(size=...) with symbolic shapes
+    # and avoid rand_like(generator=...) (not supported)
+    if generator is None:
+        uniform = torch.rand_like(probs[..., :1])                # shape (..., 1)
+    else:
+        uniform = torch.empty_like(probs[..., :1]).uniform_(0, 1, generator=generator)
+
+    # uniform = torch.rand(probs.shape[:-1], dtype=probs.dtype, device=probs.device, generator=generator).unsqueeze(-1)
+    
     cumprobs = probs.cumsum(-1)
     cumprobs[..., -1] = 1 + 1e-4
     samples = torch.searchsorted(cumprobs, uniform, right=True).squeeze(-1)

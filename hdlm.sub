@@ -4,13 +4,12 @@ getenv          = True
 
 request_gpus    = 8
 request_cpus    = 32
-request_memory  = 128GB
+request_memory  = 192GB
 
-# Force H100 + 80GB-ish
+# Force A100 80GB
 requirements    = regexp("H100", TARGET.GPUs_DeviceName) && (TARGET.GPUs_GlobalMemoryMb >= 80000)
 
-# 6 hours
-+MaxRuntime     = 21600
++MaxRuntime = 43200 
 
 output          = logs/hdlm.$(Cluster).out
 error           = logs/hdlm.$(Cluster).err
